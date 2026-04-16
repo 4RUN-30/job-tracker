@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arun — PBC Job Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #16181c;
+    --bg3: #1e2026;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f0;
+    --text2: #9a9da6;
+    --text3: #5a5d66;
+    --accent: #4f8ef7;
+    --accent2: #3a6fd4;
+    --green: #34c97a;
+    --amber: #f5a623;
+    --red: #f05555;
+    --t1: #f5c842;
+    --t1bg: rgba(245,200,66,0.1);
+    --t2: #4f8ef7;
+    --t2bg: rgba(79,142,247,0.1);
+    --t3: #34c97a;
+    --t3bg: rgba(52,201,122,0.1);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .hero {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 2.5rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .hero-title h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: var(--text);
+  }
+  .hero-title p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 3px;
+  }
+  .stats-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stat strong { color: var(--text); font-weight: 500; }
+  .stat .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 7px 12px 7px 32px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--border2); }
+  .search-input::placeholder { color: var(--text3); }
+  .filter-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .filter-btn.t1a { background: var(--t1bg); border-color: var(--t1); color: var(--t1); }
+  .filter-btn.t2a { background: var(--t2bg); border-color: var(--t2); color: var(--t2); }
+  .filter-btn.t3a { background: var(--t3bg); border-color: var(--t3); color: var(--t3); }
+
+  /* Bulk bar */
+  .bulk-bar {
+    margin: 1.5rem 2.5rem 0;
+    background: linear-gradient(135deg, rgba(79,142,247,0.08), rgba(52,201,122,0.06));
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .bulk-bar-text { font-size: 13px; color: var(--text2); }
+  .bulk-bar-text strong { color: var(--text); }
+  .bulk-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .bulk-link {
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: opacity 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .bulk-link:hover { opacity: 0.85; }
+  .bulk-link.naukri { background: rgba(52,201,122,0.15); border: 1px solid rgba(52,201,122,0.3); color: var(--green); }
+  .bulk-link.linkedin { background: rgba(79,142,247,0.15); border: 1px solid rgba(79,142,247,0.3); color: var(--accent); }
+
+  /* Main content */
+  .main { padding: 1.5rem 2.5rem 3rem; }
+
+  /* Tier section */
+  .tier-section { margin-bottom: 2rem; }
+  .tier-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tier-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .tier-tag.t1 { background: var(--t1bg); color: var(--t1); border: 1px solid rgba(245,200,66,0.2); }
+  .tier-tag.t2 { background: var(--t2bg); color: var(--t2); border: 1px solid rgba(79,142,247,0.2); }
+  .tier-tag.t3 { background: var(--t3bg); color: var(--t3); border: 1px solid rgba(52,201,122,0.2); }
+  .tier-header-text { font-size: 13px; color: var(--text2); }
+
+  /* Company grid */
+  .company-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+  }
+  .company-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: border-color 0.2s, background 0.2s;
+    animation: fadeIn 0.3s ease both;
+  }
+  .company-card:hover {
+    border-color: var(--border2);
+    background: var(--bg3);
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  .co-initial {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+  .co-initial.t1 { background: var(--t1bg); color: var(--t1); }
+  .co-initial.t2 { background: var(--t2bg); color: var(--t2); }
+  .co-initial.t3 { background: var(--t3bg); color: var(--t3); }
+  .co-info { flex: 1; min-width: 0; }
+  .co-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .co-pkg { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .co-links { display: flex; gap: 5px; flex-shrink: 0; }
+  .co-link {
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 9px;
+    border-radius: 6px;
+    transition: opacity 0.15s, transform 0.1s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .co-link:hover { opacity: 0.8; transform: translateY(-1px); }
+  .co-link.naukri { background: var(--t3bg); color: var(--green); border: 1px solid rgba(52,201,122,0.2); }
+  .co-link.linkedin { background: var(--t2bg); color: var(--accent); border: 1px solid rgba(79,142,247,0.2); }
+  .co-link.careers { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text3);
+  }
+  .empty p { margin-top: 8px; font-size: 13px; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 12px;
+    color: var(--text3);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    .hero, .main { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .bulk-bar { margin-left: 1.25rem; margin-right: 1.25rem; }
+    .co-links { flex-direction: column; }
+    .hero-top { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-top">
+    <div class="hero-title">
+      <h1>PBC Job Tracker — Arun Kumar</h1>
+      <p>Java Developer &nbsp;·&nbsp; Tamil Nadu &amp; Bengaluru &nbsp;·&nbsp; 1–3 Years Experience</p>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><span class="dot" style="background:var(--t1)"></span>Tier 1: <strong>15</strong></div>
+      <div class="stat"><span class="dot" style="background:var(--t2)"></span>Tier 2: <strong>20</strong></div>
+      <div class="stat"><span class="dot" style="background:var(--t3)"></span>Tier 3: <strong>10</strong></div>
+      <div class="stat"><span class="dot"></span>Total: <strong>45 companies</strong></div>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" type="text" id="search" placeholder="Search companies..." oninput="render()">
+    </div>
+    <button class="filter-btn active" id="btn-all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" id="btn-t1" onclick="setFilter('t1')">Tier 1</button>
+    <button class="filter-btn" id="btn-t2" onclick="setFilter('t2')">Tier 2</button>
+    <button class="filter-btn" id="btn-t3" onclick="setFilter('t3')">Tier 3</button>
+  </div>
+</div>
+
+<div class="bulk-bar">
+  <div class="bulk-bar-text"><strong>Bulk search</strong> — Find all Java Developer jobs across Chennai &amp; Bengaluru at once</div>
+  <div class="bulk-btns">
+    <a class="bulk-link naukri" href="https://www.naukri.com/java-developer-jobs-in-chennai-bengaluru?experience=1,3&jobAge=7" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      All Jobs – Naukri
+    </a>
+    <a class="bulk-link linkedin" href="https://www.linkedin.com/jobs/search/?keywords=Java+Developer&location=Chennai%2C+Tamil+Nadu&f_E=2%2C3&f_TPR=r604800" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      All Jobs – LinkedIn
+    </a>
+  </div>
+</div>
+
+<main class="main" id="main"></main>
+
+<footer>Built for Arun Kumar &nbsp;·&nbsp; 45 PBC targets in Tamil Nadu &amp; Bengaluru &nbsp;·&nbsp; Java Developer 2026</footer>
+
+<script>
+const COMPANIES = [
+  {name:"Freshworks",tier:"t1",pkg:"15–20 LPA",slug:"freshworks",li:"Freshworks",careers:"https://www.freshworks.com/company/careers/"},
+  {name:"Zoho",tier:"t1",pkg:"12–18 LPA",slug:"zoho",li:"Zoho",careers:"https://www.zoho.com/careers.html"},
+  {name:"Chargebee",tier:"t1",pkg:"15–22 LPA",slug:"chargebee",li:"Chargebee",careers:"https://www.chargebee.com/careers/"},
+  {name:"Kissflow",tier:"t1",pkg:"14–18 LPA",slug:"kissflow",li:"Kissflow",careers:"https://kissflow.com/careers/"},
+  {name:"Ramco Systems",tier:"t1",pkg:"10–15 LPA",slug:"ramco-systems",li:"Ramco+Systems",careers:"https://www.ramco.com/careers/"},
+  {name:"Thoughtworks",tier:"t1",pkg:"14–20 LPA",slug:"thoughtworks",li:"Thoughtworks",careers:"https://www.thoughtworks.com/en-in/careers"},
+  {name:"Hashedin by Deloitte",tier:"t1",pkg:"14–18 LPA",slug:"hashedin",li:"Hashedin+by+Deloitte",careers:"https://hashedin.com/careers/"},
+  {name:"Citi",tier:"t1",pkg:"14–20 LPA",slug:"citi",li:"Citi",careers:"https://jobs.citi.com/"},
+  {name:"Barclays",tier:"t1",pkg:"14–20 LPA",slug:"barclays",li:"Barclays",careers:"https://search.jobs.barclays/"},
+  {name:"BNY Mellon",tier:"t1",pkg:"14–18 LPA",slug:"bny-mellon",li:"BNY+Mellon",careers:"https://www.bnymellon.com/us/en/careers.html"},
+  {name:"Facilio",tier:"t1",pkg:"12–16 LPA",slug:"facilio",li:"Facilio",careers:"https://facilio.com/careers/"},
+  {name:"GoFrugal",tier:"t1",pkg:"10–14 LPA",slug:"gofrugal",li:"GoFrugal",careers:"https://www.gofrugal.com/careers"},
+  {name:"Matrimony.com",tier:"t1",pkg:"10–14 LPA",slug:"matrimony",li:"Matrimony.com",careers:"https://www.matrimony.com/careers/"},
+  {name:"HappyFox",tier:"t1",pkg:"12–16 LPA",slug:"happyfox",li:"HappyFox",careers:"https://www.happyfox.com/careers/"},
+  {name:"Fidelity Investments",tier:"t1",pkg:"15–22 LPA",slug:"fidelity-investments",li:"Fidelity+Investments",careers:"https://jobs.fidelity.com/"},
+  {name:"Razorpay",tier:"t2",pkg:"18–25 LPA",slug:"razorpay",li:"Razorpay",careers:"https://razorpay.com/jobs/"},
+  {name:"PhonePe",tier:"t2",pkg:"18–25 LPA",slug:"phonepe",li:"PhonePe",careers:"https://www.phonepe.com/en/careers.html"},
+  {name:"JP Morgan",tier:"t2",pkg:"18–28 LPA",slug:"jpmorgan",li:"JPMorgan+Chase",careers:"https://careers.jpmorgan.com/"},
+  {name:"Intuit",tier:"t2",pkg:"18–25 LPA",slug:"intuit",li:"Intuit",careers:"https://careers.intuit.com/"},
+  {name:"Trimble",tier:"t2",pkg:"14–20 LPA",slug:"trimble",li:"Trimble",careers:"https://trimblecareers.trimble.com/"},
+  {name:"Postman",tier:"t2",pkg:"18–25 LPA",slug:"postman",li:"Postman",careers:"https://www.postman.com/company/careers/"},
+  {name:"PayU",tier:"t2",pkg:"15–20 LPA",slug:"payu",li:"PayU",careers:"https://payu.in/careers"},
+  {name:"Standard Chartered",tier:"t2",pkg:"15–22 LPA",slug:"standard-chartered",li:"Standard+Chartered",careers:"https://scb.taleo.net/careersection/"},
+  {name:"Walmart Global Tech",tier:"t2",pkg:"18–25 LPA",slug:"walmart",li:"Walmart+Global+Tech",careers:"https://careers.walmart.com/"},
+  {name:"BrowserStack",tier:"t2",pkg:"18–24 LPA",slug:"browserstack",li:"BrowserStack",careers:"https://www.browserstack.com/careers"},
+  {name:"Goldman Sachs",tier:"t2",pkg:"20–30 LPA",slug:"goldman-sachs",li:"Goldman+Sachs",careers:"https://www.goldmansachs.com/careers/"},
+  {name:"Deutsche Bank",tier:"t2",pkg:"15–22 LPA",slug:"deutsche-bank",li:"Deutsche+Bank",careers:"https://careers.db.com/"},
+  {name:"HSBC Technology",tier:"t2",pkg:"14–20 LPA",slug:"hsbc",li:"HSBC",careers:"https://www.hsbc.com/careers"},
+  {name:"American Express",tier:"t2",pkg:"18–25 LPA",slug:"american-express",li:"American+Express",careers:"https://jobs.americanexpress.com/"},
+  {name:"Mastercard",tier:"t2",pkg:"18–25 LPA",slug:"mastercard",li:"Mastercard",careers:"https://careers.mastercard.com/"},
+  {name:"Visa",tier:"t2",pkg:"18–25 LPA",slug:"visa",li:"Visa",careers:"https://usa.visa.com/about-visa/careers.html"},
+  {name:"FIS Global",tier:"t2",pkg:"14–20 LPA",slug:"fis-global",li:"FIS",careers:"https://careers.fisglobal.com/"},
+  {name:"PayPal",tier:"t2",pkg:"18–25 LPA",slug:"paypal",li:"PayPal",careers:"https://careers.pypl.com/"},
+  {name:"Whatfix",tier:"t2",pkg:"15–20 LPA",slug:"whatfix",li:"Whatfix",careers:"https://whatfix.com/careers/"},
+  {name:"Clevertap",tier:"t2",pkg:"15–20 LPA",slug:"clevertap",li:"CleverTap",careers:"https://clevertap.com/careers/"},
+  {name:"Groww",tier:"t3",pkg:"20–28 LPA",slug:"groww",li:"Groww",careers:"https://groww.in/careers"},
+  {name:"CRED",tier:"t3",pkg:"20–30 LPA",slug:"cred",li:"CRED",careers:"https://careers.cred.club/"},
+  {name:"Zerodha",tier:"t3",pkg:"15–22 LPA",slug:"zerodha",li:"Zerodha",careers:"https://zerodha.com/careers/"},
+  {name:"Swiggy",tier:"t3",pkg:"18–25 LPA",slug:"swiggy",li:"Swiggy",careers:"https://careers.swiggy.com/"},
+  {name:"Meesho",tier:"t3",pkg:"18–25 LPA",slug:"meesho",li:"Meesho",careers:"https://meesho.io/careers"},
+  {name:"InMobi",tier:"t3",pkg:"15–22 LPA",slug:"inmobi",li:"InMobi",careers:"https://www.inmobi.com/company/careers/"},
+  {name:"Cashfree",tier:"t3",pkg:"15–20 LPA",slug:"cashfree-payments",li:"Cashfree",careers:"https://www.cashfree.com/careers/"},
+  {name:"Mad Street Den",tier:"t3",pkg:"12–18 LPA",slug:"mad-street-den",li:"Mad+Street+Den",careers:"https://www.madstreetden.com/careers/"},
+  {name:"BankBazaar",tier:"t3",pkg:"12–16 LPA",slug:"bankbazaar",li:"BankBazaar",careers:"https://www.bankbazaar.com/careers.html"},
+  {name:"Unacademy",tier:"t3",pkg:"15–20 LPA",slug:"unacademy",li:"Unacademy",careers:"https://unacademy.com/careers"},
+];
+
+const TIER_META = {
+  t1: { label: "Tier 1", cls: "t1", desc: "Most realistic — Chennai focused, apply first" },
+  t2: { label: "Tier 2", cls: "t2", desc: "Slightly harder — Bangalore heavy, strong Java needed" },
+  t3: { label: "Tier 3", cls: "t3", desc: "Worth trying — competitive but possible with prep" },
+};
+
+let activeFilter = 'all';
+
+function setFilter(f) {
+  activeFilter = f;
+  ['all','t1','t2','t3'].forEach(k => {
+    const b = document.getElementById('btn-'+k);
+    b.className = 'filter-btn';
+    if (k === f) b.className += k === 'all' ? ' active' : ` ${k}a`;
+  });
+  render();
+}
+
+function naukri(c) {
+  return `https://www.naukri.com/java-developer-jobs-in-${c.slug}?experience=1,3`;
+}
+function linkedin(c) {
+  return `https://www.linkedin.com/jobs/search/?keywords=Java+Developer+${c.li}&location=Chennai%2C+Bengaluru&f_E=2%2C3`;
+}
+
+function initials(name) {
+  return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+}
+
+function render() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const main = document.getElementById('main');
+
+  const filtered = COMPANIES.filter(c => {
+    const tierOk = activeFilter === 'all' || c.tier === activeFilter;
+    const nameOk = !q || c.name.toLowerCase().includes(q);
+    return tierOk && nameOk;
+  });
+
+  if (!filtered.length) {
+    main.innerHTML = `<div class="empty"><p style="font-size:32px">🔍</p><p>No companies match your search.</p></div>`;
+    return;
+  }
+
+  const tiers = ['t1', 't2', 't3'];
+  let html = '';
+
+  tiers.forEach(tier => {
+    const group = filtered.filter(c => c.tier === tier);
+    if (!group.length) return;
+    const meta = TIER_META[tier];
+    html += `
+      <div class="tier-section" id="section-${tier}">
+        <div class="tier-header">
+          <span class="tier-tag ${meta.cls}">${meta.label}</span>
+          <span class="tier-header-text">${meta.desc} &nbsp;·&nbsp; ${group.length} companies</span>
+        </div>
+        <div class="company-grid">
+          ${group.map((c, i) => `
+            <div class="company-card" style="animation-delay:${i * 0.03}s">
+              <div class="co-initial ${c.tier}">${initials(c.name)}</div>
+              <div class="co-info">
+                <div class="co-name">${c.name}</div>
+                <div class="co-pkg">~${c.pkg} &nbsp;·&nbsp; 2.5–3 YOE</div>
+              </div>
+              <div class="co-links">
+                <a class="co-link naukri" href="${naukri(c)}" target="_blank">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Naukri
+                </a>
+                <a class="co-link linkedin" href="${linkedin(c)}" target="_blank">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  LinkedIn
+                </a>
+                <a class="co-link careers" href="${c.careers}" target="_blank">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Careers
+                </a>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  });
+
+  main.innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
