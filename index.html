@@ -298,10 +298,10 @@
       <p>Java Developer &nbsp;·&nbsp; Tamil Nadu &amp; Bengaluru &nbsp;·&nbsp; 1–3 Years Experience</p>
     </div>
     <div class="stats-row">
-      <div class="stat"><span class="dot" style="background:var(--t1)"></span>Tier 1: <strong>15</strong></div>
-      <div class="stat"><span class="dot" style="background:var(--t2)"></span>Tier 2: <strong>20</strong></div>
-      <div class="stat"><span class="dot" style="background:var(--t3)"></span>Tier 3: <strong>10</strong></div>
-      <div class="stat"><span class="dot"></span>Total: <strong>45 companies</strong></div>
+      <div class="stat"><span class="dot" style="background:var(--t1)"></span>Tier 1: <strong id="cnt-t1">22</strong></div>
+      <div class="stat"><span class="dot" style="background:var(--t2)"></span>Tier 2: <strong id="cnt-t2">28</strong></div>
+      <div class="stat"><span class="dot" style="background:var(--t3)"></span>Tier 3: <strong id="cnt-t3">10</strong></div>
+      <div class="stat"><span class="dot"></span>Total: <strong id="cnt-total">60 companies</strong></div>
     </div>
   </div>
   <div class="controls">
@@ -332,7 +332,7 @@
 
 <main class="main" id="main"></main>
 
-<footer>Built for Arun Kumar &nbsp;·&nbsp; 45 PBC targets in Tamil Nadu &amp; Bengaluru &nbsp;·&nbsp; Java Developer 2026</footer>
+<footer>Built for Arun Kumar &nbsp;·&nbsp; 60 PBC targets in Tamil Nadu &amp; Bengaluru &nbsp;·&nbsp; Java Developer 2026</footer>
 
 <script>
 const COMPANIES = [
@@ -381,6 +381,25 @@ const COMPANIES = [
   {name:"Mad Street Den",tier:"t3",pkg:"12–18 LPA",slug:"mad-street-den",li:"Mad+Street+Den",careers:"https://www.madstreetden.com/careers/"},
   {name:"BankBazaar",tier:"t3",pkg:"12–16 LPA",slug:"bankbazaar",li:"BankBazaar",careers:"https://www.bankbazaar.com/careers.html"},
   {name:"Unacademy",tier:"t3",pkg:"15–20 LPA",slug:"unacademy",li:"Unacademy",careers:"https://unacademy.com/careers"},
+  // --- NEW ADDITIONS ---
+  // Telecom (Arun's Verizon domain advantage)
+  {name:"Amdocs",tier:"t1",pkg:"14–20 LPA",slug:"amdocs",li:"Amdocs",careers:"https://www.amdocs.com/careers"},
+  {name:"NetCracker",tier:"t1",pkg:"13–18 LPA",slug:"netcracker",li:"NetCracker",careers:"https://www.netcracker.com/careers.html"},
+  {name:"Ericsson India",tier:"t2",pkg:"15–22 LPA",slug:"ericsson",li:"Ericsson",careers:"https://jobs.ericsson.com/"},
+  {name:"Nokia India",tier:"t2",pkg:"14–20 LPA",slug:"nokia",li:"Nokia",careers:"https://www.nokia.com/about-us/careers/"},
+  {name:"Comverse",tier:"t1",pkg:"12–18 LPA",slug:"comverse",li:"Comverse",careers:"https://www.comverse.com/careers/"},
+  // Chennai fintech
+  {name:"Juspay",tier:"t1",pkg:"14–20 LPA",slug:"juspay",li:"Juspay",careers:"https://juspay.in/careers"},
+  {name:"Setu",tier:"t2",pkg:"15–22 LPA",slug:"setu",li:"Setu",careers:"https://setu.co/careers"},
+  {name:"Perfios",tier:"t1",pkg:"14–18 LPA",slug:"perfios",li:"Perfios",careers:"https://www.perfios.com/careers"},
+  {name:"Lemnisk",tier:"t1",pkg:"12–16 LPA",slug:"lemnisk",li:"Lemnisk",careers:"https://lemnisk.co/careers/"},
+  {name:"Keka HR",tier:"t1",pkg:"12–16 LPA",slug:"keka",li:"Keka",careers:"https://www.keka.com/careers/"},
+  // Bangalore additions
+  {name:"Darwinbox",tier:"t2",pkg:"15–22 LPA",slug:"darwinbox",li:"Darwinbox",careers:"https://darwinbox.com/careers"},
+  {name:"Ninjacart",tier:"t2",pkg:"14–20 LPA",slug:"ninjacart",li:"Ninjacart",careers:"https://ninjacart.in/careers"},
+  {name:"Siemens Technology",tier:"t2",pkg:"15–22 LPA",slug:"siemens",li:"Siemens+Technology",careers:"https://jobs.siemens.com/careers"},
+  {name:"Honeywell Technology",tier:"t2",pkg:"14–20 LPA",slug:"honeywell",li:"Honeywell",careers:"https://careers.honeywell.com/"},
+  {name:"Informatica",tier:"t2",pkg:"16–24 LPA",slug:"informatica",li:"Informatica",careers:"https://www.informatica.com/company/careers.html"},
 ];
 
 const TIER_META = {
@@ -475,3 +494,5 @@ render();
 </script>
 </body>
 </html>
+
+is these companies okay? or need any updates here on the companies?
